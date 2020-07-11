@@ -24,9 +24,9 @@ shoot_sound = mixer.Sound("shoot.wav")
 enemy_killed_sound = mixer.Sound("kill.wav")
 kill_sound = mixer.Sound("invaderkilled.wav")
 
-pygame.display.set_caption("Shooter Tinku")  # rename the window
+pygame.display.set_caption("Home made Space Intruder")  # rename the window
 # upload all image file to project
-player_gun = pygame.image.load("gun.png")
+player_gun = pygame.image.load("spaceship.png")
 
 boss = pygame.image.load("monster.png")
 icon = pygame.image.load("shooter.png")
@@ -73,7 +73,7 @@ def spawn_enemy():
 
 def player_bullet_fire(x, y):
     global bullet_state
-    screen.blit(bullet_img, (x, y - 10))
+    screen.blit(bullet_img, (x + 7, y - 10))
 
 
 def enemy_bullet_fire(x, y):
@@ -82,7 +82,7 @@ def enemy_bullet_fire(x, y):
 
 def collision_detection(x1, x2, y1, y2):
     distance = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
-    if distance < 16:
+    if distance < 20:
         return True
     else:
         return False
@@ -120,160 +120,161 @@ for count in range(number_of_enemy):
     # enemy_bullet_X.append(0)
     enemy_bullet_Y.append(random.randrange(15, height // 4))
 
-while True:
-    screen.fill((49, 54, 122))
-    screen.blit(background, (0, 0))
+if __name__ == "__main__":
+    while True:
+        screen.fill((49, 54, 122))
+        screen.blit(background, (0, 0))
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            quit()
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LEFT:  # Left
-                playerX_change = -4
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:  # Left
+                    playerX_change = -4
 
-            elif event.key == pygame.K_RIGHT:  # Right
-                playerX_change = 4
+                elif event.key == pygame.K_RIGHT:  # Right
+                    playerX_change = 4
 
-            elif event.key == pygame.K_UP:  # Up
-                playerY_change = -4
+                elif event.key == pygame.K_UP:  # Up
+                    playerY_change = -4
 
-            elif event.key == pygame.K_DOWN:  # Down
-                playerY_change = 4
+                elif event.key == pygame.K_DOWN:  # Down
+                    playerY_change = 4
 
-            if event.key == pygame.K_SPACE:
-                shoot_sound.play()
-                for n in range(number_of_bullet):
-                    if not bullet_state[n]:
-                        bulletX[n] = playerX
-                        bulletY[n] = playerY
-                        player_bullet_fire(bulletX[n], bulletY[n])
-                        bullet_state[n] = True
-                        total_score -= 20
-                        total_bullet += 1
-                        break
+                if event.key == pygame.K_SPACE:
+                    shoot_sound.play()
+                    for n in range(number_of_bullet):
+                        if not bullet_state[n]:
+                            bulletX[n] = playerX
+                            bulletY[n] = playerY
+                            player_bullet_fire(bulletX[n], bulletY[n])
+                            bullet_state[n] = True
+                            total_score -= 20
+                            total_bullet += 1
+                            break
 
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
-                playerX_change = 0
-            if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
-                playerY_change = 0
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+                    playerX_change = 0
+                if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
+                    playerY_change = 0
 
-    if not 0 < (playerX + playerX_change) < 770:  # restrict the movement inside the screen
-        playerX_change = 0
-    if not 0 < (playerY + playerY_change) < 550:
-        playerY_change = 0
-    playerX += playerX_change
-    playerY += playerY_change
+        if not 0 < (playerX + playerX_change) < 770:  # restrict the movement inside the screen
+            playerX_change = 0
+        if not 0 < (playerY + playerY_change) < 550:
+            playerY_change = 0
+        playerX += playerX_change
+        playerY += playerY_change
 
-    # --enemy movement --#
-    # --X movement
-    # for count in range(number_of_enemy):
-    #     enemyX[count] += enemyX_change[count]
-    #     if not 0 < enemyX[count] < 750:
-    #         enemyX_change[count] *= -1  # direction change
-    # -- Y movement
-    for count in range(number_of_enemy):
-        # if 5 > enemyX[count] or enemyX[count] > 730:
-        enemyY[count] += enemyY_change[count]
-    for count in range(number_of_enemy):
-        if enemyY[count] == random.randrange(15, height - 100):
-            enemy_bullet_Y[count] = enemyY[count]
-
-    for n in range(number_of_bullet):
-        if bulletY[n] <= 0:
-            bulletY[n] = 480
-            bullet_state[n] = False
-
-    draw_player(playerX, playerY)
-
-    for count in range(number_of_enemy):
-        draw_enemy(enemyX[count], enemyY[count], count)
-
-    # player bullet path
-    for n in range(number_of_bullet):
-        if bullet_state[n] is True:
-            bulletY[n] -= bulletY_change
-            player_bullet_fire(bulletX[n], bulletY[n])
-
-    # enemy bullet path
-    for count in range(number_of_enemy):
-        if enemy_bullet_state[count]:
-            if enemy_bullet_Y[count] == playerY and enemyX[count] == playerX or enemy_bullet_Y[count] > 585:
-                enemy_bullet_Y[count] = int(enemyY[count]) + 50
-                enemy_bullet_state[count] = False
-
-            else:
-                enemy_bullet_Y[count] += 2  # bullet speed
-                enemy_bullet_fire(enemyX[count], enemy_bullet_Y[count])
-        else:
-            if enemy_bullet_Y[count] > 585:
-                enemy_bullet_Y[count] = int(enemyY[count]) + 50
-            elif enemyY[count] > enemy_bullet_Y[count] - 5:
-                # enemy_bullet_X[count] = enemyX[count]
-                enemy_bullet_state[count] = True
-
-    # enemy killed
-    for count in range(number_of_enemy):
-        for n in range(number_of_bullet):
-            if collision_detection(bulletX[n], enemyX[count], bulletY[n], enemyY[count]):
-                enemy_killed_sound.play()
-                enemy[count] = pygame.image.load(f"enemy{random.randint(1, 5)}.png")
-                enemyX[count], enemyY[count] = spawn_enemy()
-                enemy_bullet_Y[count] = enemyY[count] + 30
-                # enemyX_change[count] *= random.choice([1, -1])
-                bulletY[n] = 480
-                total_score += 100  # kill enemy score
-                bullet_state[n] = False
-                enemy_killed += 1
-
-    # text
-    show_score(textX, textY)
-    text = font.render("Enemy Killed : " + str(enemy_killed), True, (255, 255, 255))
-    text2 = font.render("Bullet Fired : " + str(total_bullet), True, (255, 255, 255))
-
-    screen.blit(text, (600, 10))
-    screen.blit(text2, (600, 40))
-
-    # life deduction
-    for i in range(number_of_enemy):
-        if enemyY[i] > 575:
-            player_life -= 1
-            enemy[i] = pygame.image.load(f"enemy{random.randint(1, 5)}.png")
-            enemyX[i], enemyY[i] = spawn_enemy()
-            kill_sound.play()
-    for i in range(number_of_enemy):
-        if collision_detection(playerX, enemyX[i], playerY, enemy_bullet_Y[i]):
-            enemy_bullet_Y[i] = int(enemyY[i]) + 50
-            armour_health -= 1
-            break
-
-    text3 = font.render("Life Line : " + str(player_life), True, (255, 255, 255))
-    screen.blit(text3, (300, 10))
-
-    if player_life == 0 or armour_health == 0:
-        flag = True
-
-    # Game Over
-    if flag:
-        game_over()
-        pygame.display.update()
-        pygame.time.delay(1000)
-        quit()
-    else:
+        # --enemy movement --#
+        # --X movement
+        # for count in range(number_of_enemy):
+        #     enemyX[count] += enemyX_change[count]
+        #     if not 0 < enemyX[count] < 750:
+        #         enemyX_change[count] *= -1  # direction change
+        # -- Y movement
         for count in range(number_of_enemy):
-            if collision_detection(playerX, enemyX[count], playerY, enemyY[count]):
-                sound = mixer.Sound("explosion.wav")
-                sound.play()
-                m, n = playerX, playerY
-                # explosion animation
-                for _ in range(9):
-                    screen.blit(pygame.image.load(f"Explosion{_}.png"), (m, n))
-                    pygame.time.delay(100)
-                    pygame.display.update()
+            # if 5 > enemyX[count] or enemyX[count] > 730:
+            enemyY[count] += enemyY_change[count]
+        for count in range(number_of_enemy):
+            if enemyY[count] == random.randrange(15, height - 100):
+                enemy_bullet_Y[count] = enemyY[count]
 
-                # enemy disappearance
-                screen.blit(background, (0, 0))
-                pygame.display.update()
-                flag = True
+        for n in range(number_of_bullet):
+            if bulletY[n] <= 0:
+                bulletY[n] = 480
+                bullet_state[n] = False
+
+        draw_player(playerX, playerY)
+
+        for count in range(number_of_enemy):
+            draw_enemy(enemyX[count], enemyY[count], count)
+
+        # player bullet path
+        for n in range(number_of_bullet):
+            if bullet_state[n] is True:
+                bulletY[n] -= bulletY_change
+                player_bullet_fire(bulletX[n], bulletY[n])
+
+        # enemy bullet path
+        for count in range(number_of_enemy):
+            if enemy_bullet_state[count]:
+                if enemy_bullet_Y[count] == playerY and enemyX[count] == playerX or enemy_bullet_Y[count] > 585:
+                    enemy_bullet_Y[count] = int(enemyY[count]) + 50
+                    enemy_bullet_state[count] = False
+
+                else:
+                    enemy_bullet_Y[count] += 2  # bullet speed
+                    enemy_bullet_fire(enemyX[count], enemy_bullet_Y[count])
+            else:
+                if enemy_bullet_Y[count] > 585:
+                    enemy_bullet_Y[count] = int(enemyY[count]) + 50
+                elif enemyY[count] > enemy_bullet_Y[count] - 5:
+                    # enemy_bullet_X[count] = enemyX[count]
+                    enemy_bullet_state[count] = True
+
+        # enemy killed
+        for count in range(number_of_enemy):
+            for n in range(number_of_bullet):
+                if collision_detection(bulletX[n], enemyX[count], bulletY[n], enemyY[count]):
+                    enemy_killed_sound.play()
+                    enemy[count] = pygame.image.load(f"enemy{random.randint(1, 5)}.png")
+                    enemyX[count], enemyY[count] = spawn_enemy()
+                    enemy_bullet_Y[count] = enemyY[count] + 30
+                    # enemyX_change[count] *= random.choice([1, -1])
+                    bulletY[n] = 480
+                    total_score += 100  # kill enemy score
+                    bullet_state[n] = False
+                    enemy_killed += 1
+
+        # text
+        show_score(textX, textY)
+        text = font.render("Enemy Killed : " + str(enemy_killed), True, (255, 255, 255))
+        text2 = font.render("Bullet Fired : " + str(total_bullet), True, (255, 255, 255))
+
+        screen.blit(text, (600, 10))
+        screen.blit(text2, (600, 40))
+
+        # life deduction
+        for i in range(number_of_enemy):
+            if enemyY[i] > 575:
+                player_life -= 1
+                enemy[i] = pygame.image.load(f"enemy{random.randint(1, 5)}.png")
+                enemyX[i], enemyY[i] = spawn_enemy()
+                kill_sound.play()
+        for i in range(number_of_enemy):
+            if collision_detection(playerX, enemyX[i], playerY+20, enemy_bullet_Y[i]):  # enemy_bullet player collision
+                enemy_bullet_Y[i] = int(enemyY[i]) + 50
+                armour_health -= 1
                 break
-    pygame.display.update()
+
+        text3 = font.render("Life Line : " + str(player_life), True, (255, 255, 255))
+        screen.blit(text3, (300, 10))
+
+        if player_life == 0 or armour_health == 0:
+            flag = True
+
+        # Game Over
+        if flag:
+            game_over()
+            pygame.display.update()
+            pygame.time.delay(1000)
+            quit()
+        else:
+            for count in range(number_of_enemy):
+                if collision_detection(playerX, enemyX[count], playerY, enemyY[count]):  # enemy player collision
+                    sound = mixer.Sound("explosion.wav")
+                    sound.play()
+                    m, n = playerX, playerY
+                    # explosion animation
+                    for _ in range(9):
+                        screen.blit(pygame.image.load(f"Explosion{_}.png"), (m, n))
+                        pygame.time.delay(100)
+                        pygame.display.update()
+
+                    # enemy disappearance
+                    screen.blit(background, (0, 0))
+                    pygame.display.update()
+                    flag = True
+                    break
+        pygame.display.update()
