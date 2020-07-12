@@ -278,3 +278,4 @@ if __name__ == "__main__":
                     flag = True
                     break
         pygame.display.update()
+    pygame.quit()
