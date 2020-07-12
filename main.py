@@ -127,6 +127,7 @@ if __name__ == "__main__":
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                pygame.quit()
                 quit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:  # Left
@@ -278,4 +279,4 @@ if __name__ == "__main__":
                     flag = True
                     break
         pygame.display.update()
-    pygame.quit()
+    
