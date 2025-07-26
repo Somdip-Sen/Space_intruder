@@ -2,7 +2,7 @@
 
 # 👾 Space Intruder - Retro 2D Shooter 👾
 
-<img src="https://placehold.co/600x300/0d1b2a/e0e1dd?text=Space+Intruder" alt="Space Intruder Game Banner"/>
+<img src="https://github.com/Somdip-Sen/Space_intruder/blob/master/banner.png" alt="Space Intruder Game Banner"/>
 
 **A classic arcade-style 2D space shooter built with Python and Pygame. Dodge, shoot, and survive against waves of alien enemies!**
 
